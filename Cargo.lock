@@ -522,7 +522,7 @@ dependencies = [
  "base64",
  "edge-nal",
  "embassy-futures",
- "embassy-sync 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "embassy-sync 0.7.2",
  "embassy-time",
  "embedded-io-async 0.6.1",
  "embedded-svc",
@@ -564,7 +564,7 @@ checksum = "554e3e840696f54b4c9afcf28a0f24da431c927f4151040020416e7393d6d0d8"
 dependencies = [
  "embassy-futures",
  "embassy-hal-internal",
- "embassy-sync 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "embassy-sync 0.7.2",
  "embedded-hal 0.2.7",
  "embedded-hal 1.0.0",
  "embedded-hal-async",
@@ -626,7 +626,7 @@ checksum = "0558a231a47e7d4a06a28b5278c92e860f1200f24821d2f365a2f40fe3f3c7b2"
 dependencies = [
  "document-features",
  "embassy-net-driver",
- "embassy-sync 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "embassy-sync 0.7.2",
  "embassy-time",
  "embedded-io-async 0.6.1",
  "embedded-nal-async",
@@ -654,18 +654,6 @@ dependencies = [
  "futures-sink",
  "futures-util",
  "heapless 0.8.0",
-]
-
-[[package]]
-name = "embassy-sync"
-version = "0.7.2"
-dependencies = [
- "cfg-if",
- "critical-section",
- "embedded-io-async 0.7.0",
- "futures-core",
- "futures-sink",
- "heapless 0.9.2",
 ]
 
 [[package]]
@@ -733,7 +721,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "288751f8eaa44a5cf2613f13cee0ca8e06e6638cb96e897e6834702c79084b23"
 dependencies = [
  "critical-section",
- "embassy-sync 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "embassy-sync 0.7.2",
  "embassy-usb-driver",
 ]
 
@@ -1001,7 +989,7 @@ dependencies = [
  "document-features",
  "embassy-embedded-hal",
  "embassy-futures",
- "embassy-sync 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "embassy-sync 0.7.2",
  "embassy-usb-driver",
  "embassy-usb-synopsys-otg",
  "embedded-can",
@@ -1226,7 +1214,7 @@ dependencies = [
  "cfg-if",
  "document-features",
  "embassy-executor",
- "embassy-sync 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "embassy-sync 0.7.2",
  "embassy-time-driver",
  "embassy-time-queue-utils",
  "esp-config",
@@ -1246,7 +1234,7 @@ dependencies = [
  "cfg-if",
  "document-features",
  "embassy-sync 0.6.2",
- "embassy-sync 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "embassy-sync 0.7.2",
  "esp-metadata-generated",
  "riscv",
  "xtensa-lx",
