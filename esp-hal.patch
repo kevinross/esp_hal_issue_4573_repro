@@ -1,0 +1,6 @@
+# in esp-radio/src/common_adapter.rs, for function esp_random_ulong, update to read like
+
+#[allow(unused)]
+#[ram]
+#[unsafe(no_mangle)]	// <- added to fix missing symbol in mbedtls
+pub unsafe extern "C" fn random() -> c_ulong {

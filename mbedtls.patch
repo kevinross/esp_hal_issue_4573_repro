@@ -1,0 +1,262 @@
+diff --git a/.cargo/config.toml b/.cargo/config.toml
+index 61e475b..71534aa 100644
+--- a/.cargo/config.toml
++++ b/.cargo/config.toml
+@@ -4,7 +4,7 @@
+ # Build on target firmware with baremetal
+ #target = "xtensa-esp32-none-elf"
+ #target = "xtensa-esp32s2-none-elf"
+-#target = "xtensa-esp32s3-none-elf"
++target = "xtensa-esp32s3-none-elf"
+ #target = "riscv32imc-unknown-none-elf"
+ # Build on target firmware with ESP IDF
+ #target = "xtensa-esp32-espidf"
+diff --git a/Cargo.toml b/Cargo.toml
+index f62a58b..e6623a4 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -12,7 +12,7 @@ lto = "fat"
+ opt-level = "s"
+ 
+ 
+-[profile.release.package.esp-wifi]
++[profile.release.package.esp-radio]
+ opt-level = 3
+ 
+ [profile.dev]
+@@ -20,31 +20,30 @@ debug = true
+ lto = "fat"
+ opt-level = "z"
+ 
+-[profile.dev.package.esp-wifi]
++[profile.dev.package.esp-radio]
+ opt-level = 3
+ 
+ [dependencies]
+-esp-hal = { version = "=1.0.0-rc.0", optional = true }
+-esp-backtrace = { version = "0.16", optional = true, features = [
++esp-hal = { path = "../esp-hal/esp-hal", optional = true }
++esp-backtrace = { path = "../esp-hal/esp-backtrace", optional = true, features = [
+     "panic-handler",
+     "println",
+-    "exception-handler",
+ ] }
+-esp-println = { version = "0.14", optional = true, features = ["log-04"] }
+-esp-hal-embassy = { version = "0.8", optional = true }
++esp-println = { path = "../esp-hal/esp-println", optional = true, features = ["log-04"] }
++esp-rtos = { path = "../esp-hal/esp-rtos", optional = true, default-features = false }
+ 
+-embassy-time = { version = "0.4.0", optional = true }
+-embassy-executor = { version = "0.7", package = "embassy-executor", features = [
++embassy-time = { version = "0.5.0", optional = true }
++embassy-executor = { version = "0.9", package = "embassy-executor", features = [
+     "nightly",
+ ], optional = true }
+-embassy-net = { version = "0.6.0", features = [
++embassy-net = { version = "0.7", features = [
+     "tcp",
+     "udp",
+     "dhcpv4",
+     "medium-ethernet",
+ ], optional = true }
+ 
+-esp-wifi = { version = "0.15.0", optional = true, features = [
++esp-radio = { path = "../esp-hal/esp-radio", optional = true, features = [
+     "sys-logs",
+     "wifi",
+ ] }
+@@ -59,10 +58,10 @@ smoltcp = { version = "0.12.0", optional = true, default-features = false, featu
+     "socket-raw",
+     "socket-dhcpv4",
+ ] }
+-log = "0.4.16"
+-embedded-io = "0.6.1"
+-embedded-io-async = "0.6.0"
+-heapless = "0.8.0"
++log = "0.4"
++embedded-io = "0.6"
++embedded-io-async = "0.6"
++heapless = "0.8"
+ critical-section = "1.0.1"
+ static_cell = { version = "2.1", features = ["nightly"] }
+ 
+@@ -103,15 +102,15 @@ examples = [
+     "esp-hal",
+     "esp-backtrace",
+     "esp-println",
+-    "esp-wifi",
+-    "esp-wifi/smoltcp",
++    "esp-radio",
++    "esp-radio/smoltcp",
+     "smoltcp",
+     "esp-alloc",
+     "esp-bootloader-esp-idf",
+ ]
+ examples-async = [
+     "examples",
+-    "esp-hal-embassy",
++    "esp-rtos",
+     "embassy-time",
+     "embassy-executor",
+     "embassy-net",
+@@ -125,42 +124,42 @@ examples-std = ["critical-section/std"]
+ 
+ esp32 = [
+     "esp-hal?/esp32",
+-    "esp-hal-embassy?/esp32",
++    "esp-rtos?/esp32",
+     "esp-backtrace?/esp32",
+     "esp-println?/esp32",
+-    "esp-wifi?/esp32",
++    "esp-radio?/esp32",
+     "esp-mbedtls/esp32",
+ ]
+ esp32c3 = [
+     "esp-hal?/esp32c3",
+-    "esp-hal-embassy?/esp32c3",
++    "esp-rtos?/esp32c3",
+     "esp-backtrace?/esp32c3",
+     "esp-println?/esp32c3",
+-    "esp-wifi?/esp32c3",
++    "esp-radio?/esp32c3",
+     "esp-mbedtls/esp32c3",
+ ]
+ esp32c6 = [
+     "esp-hal?/esp32c6",
+-    "esp-hal-embassy?/esp32c6",
++    "esp-rtos?/esp32c6",
+     "esp-backtrace?/esp32c6",
+     "esp-println?/esp32c6",
+-    "esp-wifi?/esp32c6",
++    "esp-radio?/esp32c6",
+     "esp-mbedtls/esp32c6",
+ ]
+ esp32s2 = [
+     "esp-hal?/esp32s2",
+-    "esp-hal-embassy?/esp32s2",
++    "esp-rtos?/esp32s2",
+     "esp-backtrace?/esp32s2",
+     "esp-println?/esp32s2",
+-    "esp-wifi?/esp32s2",
++    "esp-radio?/esp32s2",
+     "esp-mbedtls/esp32s2",
+ ]
+ esp32s3 = [
+     "esp-hal?/esp32s3",
+-    "esp-hal-embassy?/esp32s3",
++    "esp-rtos?/esp32s3",
+     "esp-backtrace?/esp32s3",
+     "esp-println?/esp32s3",
+-    "esp-wifi?/esp32s3",
++    "esp-radio?/esp32s3",
+     "esp-mbedtls/esp32s3",
+ ]
+ 
+diff --git a/esp-mbedtls-sys/Cargo.toml b/esp-mbedtls-sys/Cargo.toml
+index 43bff22..cb0f881 100644
+--- a/esp-mbedtls-sys/Cargo.toml
++++ b/esp-mbedtls-sys/Cargo.toml
+@@ -19,7 +19,7 @@ embuild     = "0.33"
+ # For malloc/free
+ # TODO: Replace with `esp-alloc` once `esp-alloc` starts to provide `malloc` and `free` in future
+ # ... or switch to our own `mbedtls_malloc/free`
+-esp-wifi = { version = "0.15.0", default-features = false, optional = true }
++esp-radio = { path = "../../esp-hal/esp-radio", default-features = false, optional = true }
+ 
+ # ESP-IDF: The mbedtls lib distributed with ESP-IDF is used
+ [target.'cfg(target_os = "espidf")'.dependencies]
+@@ -31,8 +31,8 @@ esp-idf-sys = { version = "0.36", default-features = false }
+ default = []
+ 
+ # ESP-HAL: Exactly *one* chip MUST be selected via its feature:
+-esp32 = ["esp-wifi/esp32"]
+-esp32c3 = ["esp-wifi/esp32c3"]
+-esp32c6 = ["esp-wifi/esp32c6"]
+-esp32s2 = ["esp-wifi/esp32s2"]
+-esp32s3 = ["esp-wifi/esp32s3"]
++esp32 = ["esp-radio/esp32"]
++esp32c3 = ["esp-radio/esp32c3"]
++esp32c6 = ["esp-radio/esp32c6"]
++esp32s2 = ["esp-radio/esp32s2"]
++esp32s3 = ["esp-radio/esp32s3"]
+diff --git a/esp-mbedtls-sys/src/lib.rs b/esp-mbedtls-sys/src/lib.rs
+index c8cf936..3f9d6ac 100644
+--- a/esp-mbedtls-sys/src/lib.rs
++++ b/esp-mbedtls-sys/src/lib.rs
+@@ -8,7 +8,7 @@
+     feature = "esp32s2",
+     feature = "esp32s3"
+ ))]
+-use esp_wifi as _;
++use esp_radio as _;
+ 
+ #[cfg(not(target_os = "espidf"))]
+ mod c_types;
+diff --git a/esp-mbedtls/Cargo.toml b/esp-mbedtls/Cargo.toml
+index 70b852e..d9db787 100644
+--- a/esp-mbedtls/Cargo.toml
++++ b/esp-mbedtls/Cargo.toml
+@@ -12,13 +12,13 @@ harness = false
+ esp-mbedtls-sys = { path = "../esp-mbedtls-sys" }
+ log = { version = "0.4.17", default-features = false }
+ enumset = { version = "1", default-features = false }
+-embedded-io = { version = "0.6.1" }
+-embedded-io-async = { version = "0.6.0", optional = true }
+-esp-hal = { version = "=1.0.0-rc.0", features = ["unstable"], optional = true }
++embedded-io = { version = "0.6" }
++embedded-io-async = { version = "0.6", optional = true }
++esp-hal = { path = "../../esp-hal/esp-hal", features = ["requires-unstable"], optional = true }
+ # For malloc/free
+ # TODO: Replace with `esp-alloc` once `esp-alloc` starts to provide `malloc` and `free` in future
+ # ... or switch to our own `mbedtls_malloc/free`
+-esp-wifi = { version = "0.15", default-features = false, optional = true }
++esp-radio = { path = "../../esp-hal/esp-radio", default-features = false, optional = true }
+ cfg-if = "1.0.0"
+ edge-nal = { version = "0.5.0", optional = true }
+ critical-section = "1.1.3"
+@@ -28,11 +28,11 @@ nb = { version = "1.1.0", optional = true }
+ [features]
+ default = ["edge-nal"]
+ async = ["dep:embedded-io-async"]
+-esp32 = ["esp-hal/esp32", "esp-wifi/esp32", "esp-mbedtls-sys/esp32"]
+-esp32c3 = ["esp-hal/esp32c3", "esp-wifi/esp32c3", "esp-mbedtls-sys/esp32c3"]
+-esp32c6 = ["esp-hal/esp32c6", "esp-wifi/esp32c6", "esp-mbedtls-sys/esp32c6"]
+-esp32s2 = ["esp-hal/esp32s2", "esp-wifi/esp32s2", "esp-mbedtls-sys/esp32s2"]
+-esp32s3 = ["esp-hal/esp32s3", "esp-wifi/esp32s3", "esp-mbedtls-sys/esp32s3"]
++esp32 = ["esp-hal/esp32", "esp-radio/esp32", "esp-mbedtls-sys/esp32"]
++esp32c3 = ["esp-hal/esp32c3", "esp-radio/esp32c3", "esp-mbedtls-sys/esp32c3"]
++esp32c6 = ["esp-hal/esp32c6", "esp-radio/esp32c6", "esp-mbedtls-sys/esp32c6"]
++esp32s2 = ["esp-hal/esp32s2", "esp-radio/esp32s2", "esp-mbedtls-sys/esp32s2"]
++esp32s3 = ["esp-hal/esp32s3", "esp-radio/esp32s3", "esp-mbedtls-sys/esp32s3"]
+ 
+ # Implement the traits defined in the latest HEAD of `edge-nal`
+ edge-nal = ["dep:edge-nal", "async"]
+diff --git a/esp-mbedtls/src/esp_hal/bignum.rs b/esp-mbedtls/src/esp_hal/bignum.rs
+index 9efdb26..6612f4a 100644
+--- a/esp-mbedtls/src/esp_hal/bignum.rs
++++ b/esp-mbedtls/src/esp_hal/bignum.rs
+@@ -180,9 +180,8 @@ pub unsafe extern "C" fn mbedtls_mpi_exp_mod(
+                 error_checked!(mbedtls_mpi_grow(Z, m_words));
+             }
+ 
+-            nb::block!(rsa.ready()).unwrap();
+-            rsa.enable_disable_constant_time_acceleration(true);
+-            rsa.enable_disable_search_acceleration(true);
++            rsa.disable_constant_time(false);
++            rsa.search_acceleration(true);
+             unsafe {
+                 match num_words {
+                     U256::LIMBS => {
+diff --git a/esp-mbedtls/src/lib.rs b/esp-mbedtls/src/lib.rs
+index 9e28fe1..87a929e 100644
+--- a/esp-mbedtls/src/lib.rs
++++ b/esp-mbedtls/src/lib.rs
+@@ -25,7 +25,7 @@ use esp_mbedtls_sys::bindings::*;
+     feature = "esp32s2",
+     feature = "esp32s3"
+ ))]
+-use esp_wifi as _;
++use esp_radio as _;
+ 
+ #[cfg(feature = "edge-nal")]
+ mod edge_nal;

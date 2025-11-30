@@ -1,0 +1,26 @@
+[build]
+target = "xtensa-esp32s3-none-elf"
+
+[target.xtensa-esp32s3-none-elf]
+#linker = "ldproxy"
+runner = "espflash flash --monitor"
+#runner = "probe-rs run --chip esp32s3"
+#rustflags = [ "--cfg",  "espidf_time64"] #, "-Zlocation-detail=none", "-Zfmt-debug=none"]
+rustflags = [
+    # GNU LD
+    "-C", "link-arg=-Wl,-Tlinkall.x",
+    "-C", "link-arg=-nostartfiles",
+#    "-Zfmt-debug=none",
+#    "-Zlocation-detail=none"
+]
+
+[unstable]
+build-std = ["alloc", "core", "panic_abort"]
+build-std-features = ["panic_immediate_abort"] #"optimize_for_size",
+
+[net]
+git-fetch-with-cli = false
+
+[env]
+MCU="esp32s3"
+SDKROOT="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"

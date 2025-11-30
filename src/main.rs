@@ -1,0 +1,351 @@
+#![feature(future_join)]
+#![feature(allocator_api)]
+#![feature(impl_trait_in_assoc_type)]
+#![feature(impl_trait_in_bindings)]
+#![feature(async_fn_traits)]
+#![feature(formatting_options)]
+#![feature(string_remove_matches)]
+#![feature(iter_collect_into)]
+#![feature(maybe_uninit_slice)]
+#![feature(unboxed_closures)]
+#![feature(box_into_inner)]
+#![feature(btreemap_alloc)]
+#![feature(sync_unsafe_cell)]
+#![cfg_attr(not(target_arch = "xtensa"), feature(thread_id_value))]
+#![cfg_attr(all(target_arch = "xtensa", target_os = "none"), no_std)]
+#![cfg_attr(all(target_arch = "xtensa", target_os = "none"), no_main)]
+extern crate alloc;
+extern crate core;
+extern crate no_std_compat2 as std;
+
+use std::prelude::v1::*;
+mod netclients;
+mod osdep;
+use crate::osdep::startup::*;
+use crate::osdep::typedefs::{GlobalStatics, SpawnerStatics};
+use alloc::boxed::Box;
+
+use embassy_executor::{Spawner, task};
+use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
+use embassy_sync::lazy_lock::LazyLock;
+use embassy_sync::signal::Signal;
+
+const LOG_LEVEL: log::LevelFilter = log::LevelFilter::Trace;
+const SSID: &str = "slashdot2g";
+const PASSWORD: &str = "slashdot";
+
+pub(crate) static NOTIFIER: LazyLock<Signal<CriticalSectionRawMutex, bool>> =
+    LazyLock::new(|| Signal::new());
+
+#[task]
+async fn run_mqtt_bridge(statics: GlobalStatics, spawner: Spawner, spawner1: Spawner) {
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+    log::info!("login to abcd");
+}
+fn startup_run(statics: GlobalStatics, sys: SpawnerStatics) {
+    log::info!("startup_run");
+    let mut spawner: Option<Spawner> = None;
+    let mut spawner1: Option<Spawner> = None;
+    sys.core0_spawner.lock(|sp| {
+        spawner.replace(sp.borrow().as_ref().unwrap().clone());
+    });
+    sys.core1_spawner.lock(|sp| {
+        spawner1.replace(sp.borrow().as_ref().unwrap().clone());
+    });
+    let spawner = spawner.unwrap();
+    let spawner1 = spawner1.unwrap();
+    spawner1
+        .spawn(run_mqtt_bridge(statics, spawner, spawner1))
+        .unwrap();
+}
+
+pub fn main_real() {
+    startup_fn(SSID, PASSWORD, Box::new(startup_run));
+}
+
+#[cfg(all(target_arch = "xtensa", target_os = "none"))]
+#[esp_hal::main]
+fn main() -> ! {
+    loop {
+        main_real()
+    }
+}
