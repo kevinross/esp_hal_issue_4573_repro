@@ -7,44 +7,30 @@ use core::net::SocketAddr;
 use edge_http::io::Error;
 use edge_nal::{Close, Readable, TcpConnect, TcpShutdown, TcpSplit};
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
-use esp_mbedtls::TlsVersion::Tls1_2;
-use esp_mbedtls::asynch::TlsConnector;
-use esp_mbedtls::asynch::io::{Read, Write};
-use esp_mbedtls::io::{ErrorKind, ErrorType};
-use esp_mbedtls::{Certificates, TlsError, TlsReference};
+use embedded_io::{ErrorKind, ErrorType};
+use embedded_io_async::{Read, Write};
 
 static MUTEX: embassy_sync::mutex::Mutex<CriticalSectionRawMutex, bool> =
     embassy_sync::mutex::Mutex::new(false);
 
 pub enum TcpWrapper<'a> {
     Plain(&'a TcpStack),
-    Tls(TlsConnector<'a, &'a TcpStack>),
 }
 
 impl<'a> TcpWrapper<'a> {
     pub fn plain(stack: &'a TcpStack) -> Self {
         TcpWrapper::Plain(stack)
     }
-    pub fn tls(
-        tcp: &'a TcpStack,
-        c_host: &'a CStr,
-        tls: TlsReference<'a>,
-        certs: Certificates<'a>,
-    ) -> Self {
-        TcpWrapper::Tls(TlsConnector::new(tcp, c_host, Tls1_2, certs, tls))
-    }
 }
 
 pub enum TcpSock<'a> {
     Plain(<TcpStack as TcpConnect>::Socket<'a>),
-    Tls(<TlsConnector<'a, TcpStack> as TcpConnect>::Socket<'a>),
 }
 
 impl<'a> TcpSock<'a> {
     pub fn into_inner(self) -> <TcpStack as TcpConnect>::Socket<'a> {
         match self {
             TcpSock::Plain(sock) => sock,
-            TcpSock::Tls(_sock) => unimplemented!(),
         }
     }
 }
@@ -63,9 +49,6 @@ macro_rules! samesies {
             TcpSock::Plain(sock) => Box::pin_in(sock.$st(), &PSRAM_ALLOCATOR)
                 .await
                 .map_err(EdgeHttpError::from),
-            TcpSock::Tls(sock) => Box::pin_in(sock.$st(), &PSRAM_ALLOCATOR)
-                .await
-                .map_err(EdgeHttpError::from),
         }
     };
 }
@@ -73,7 +56,6 @@ macro_rules! samesies_arg {
     ($self:ident, $st:ident, $arg:expr) => {
         match $self {
             TcpSock::Plain(sock) => Box::pin(sock.$st($arg)).await.map_err(EdgeHttpError::from),
-            TcpSock::Tls(sock) => Box::pin(sock.$st($arg)).await.map_err(EdgeHttpError::from),
         }
     };
 }
@@ -83,9 +65,6 @@ impl TcpShutdown for TcpSock<'_> {
         // let _ = MUTEX.lock().await;
         match self {
             TcpSock::Plain(plain) => Box::pin_in(plain.close(what), &PSRAM_ALLOCATOR)
-                .await
-                .map_err(From::from),
-            TcpSock::Tls(tls) => Box::pin_in(tls.close(), &PSRAM_ALLOCATOR)
                 .await
                 .map_err(From::from),
         }
@@ -170,9 +149,6 @@ impl TcpSplit for TcpSock<'_> {
 
                 (TcpReaderWrapper(read), TcpWriterWrapper(write))
             }
-            TcpSock::Tls(_t) => {
-                unimplemented!()
-            }
         }
     }
 }
@@ -218,12 +194,6 @@ impl TcpConnect for TcpWrapper<'_> {
                     .map_err(EdgeHttpError::from)?;
                 Ok(TcpSock::Plain(sock))
             }
-            TcpWrapper::Tls(tls) => {
-                let sock = Box::pin_in(tls.connect(remote), &PSRAM_ALLOCATOR)
-                    .await
-                    .map_err(EdgeHttpError::from)?;
-                Ok(TcpSock::Tls(sock))
-            }
         }
     }
 }
@@ -231,7 +201,6 @@ impl TcpConnect for TcpWrapper<'_> {
 #[derive(Debug)]
 pub enum EdgeHttpError {
     Tcp(TcpError),
-    Tls(TlsError),
 }
 
 impl Display for EdgeHttpError {
@@ -248,18 +217,8 @@ impl EdgeHttpError {
             None
         }
     }
-    pub fn from_tls_edge(e: Error<TlsError>) -> Option<Self> {
-        if let Error::Io(e) = e {
-            Some(Self::Tls(e))
-        } else {
-            None
-        }
-    }
     pub fn from_tcp(e: TcpError) -> Self {
         Self::Tcp(e)
-    }
-    pub fn from_tls(e: TlsError) -> Self {
-        Self::Tls(e)
     }
 }
 
@@ -268,20 +227,9 @@ impl From<Error<TcpError>> for EdgeHttpError {
         EdgeHttpError::from_tcp_edge(e).unwrap()
     }
 }
-impl From<Error<TlsError>> for EdgeHttpError {
-    fn from(e: Error<TlsError>) -> Self {
-        EdgeHttpError::from_tls_edge(e).unwrap()
-    }
-}
 impl From<TcpError> for EdgeHttpError {
     fn from(e: TcpError) -> Self {
         Self::Tcp(e)
-    }
-}
-
-impl From<TlsError> for EdgeHttpError {
-    fn from(e: TlsError) -> Self {
-        Self::Tls(e)
     }
 }
 
@@ -289,7 +237,6 @@ impl embedded_io::Error for EdgeHttpError {
     fn kind(&self) -> ErrorKind {
         match self {
             EdgeHttpError::Tcp(tcp) => tcp.kind().into(),
-            EdgeHttpError::Tls(tls) => tls.kind(),
         }
     }
 }

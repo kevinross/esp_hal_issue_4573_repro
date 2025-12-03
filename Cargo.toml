@@ -22,7 +22,7 @@ embassy-sync = { version = "0.7" }
 embassy-time = { version = "0.5", features = [] }
 embedded-io = { version = "0.6", features = ["alloc"], default-features = false }
 embedded-io-async = { version = "0.6", features = ["alloc"], default-features = false }
-esp-alloc = { path = "../esp-hal/esp-alloc", default-features = false, features = ["nightly", "internal-heap-stats", "global"] }
+esp-alloc = { path = "../esp-hal/esp-alloc", default-features = false, features = ["nightly", "internal-heap-stats"] }
 esp-backtrace = { path = "../esp-hal/esp-backtrace", features = ["esp32s3", "println", "panic-handler", "semihosting"] }
 esp-bootloader-esp-idf = { path = "../esp-hal/esp-bootloader-esp-idf", features = ["log-04", "esp32s3"] }
 esp-hal = { path = "../esp-hal/esp-hal", features = ["esp32s3", "unstable", "log-04", "psram", "rt", "exception-handler"] }
@@ -40,18 +40,6 @@ static_cell = "2.1"
 [build-dependencies]
 cfg-if = "1.0.0"
 esp-idf-part = "0.6.0"
-
-[patch.crates-io]
-edge-nal = {path = "../edge-net/edge-nal"}
-edge-nal-embassy = {path = "../edge-net/edge-nal-embassy"}
-edge-http = {path = "../edge-net/edge-http"}
-
-[profile.release]
-opt-level = "s"
-strip = true
-lto = true
-codegen-units = 1
-panic = "abort"
 
 [profile.dev]
 debug = true    # Symbols are nice and they don't increase the size on Flash
